@@ -1,0 +1,5 @@
+ext {
+    nettyVersion = "4.1.104.Final"
+    log4jVersion = "2.22.1"
+    log4jApiVersion = "2.0.12"
+}

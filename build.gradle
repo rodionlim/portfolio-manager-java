@@ -1,0 +1,52 @@
+plugins {
+    id 'java-library'
+    id 'application'
+}
+
+group = 'org.rodion.pfm'
+version = '1.0-SNAPSHOT'
+
+if (!JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+    throw new GradleException("Java 17 or later is required to build Portfolio Manager.\n" +
+            "  Detected version ${JavaVersion.current()}")
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply from: 'gradle/versions.gradle'
+
+ext {
+    javaMainClass = "org.rodion.pfm.PortfolioManager"
+}
+
+jar {
+    archiveBaseName = 'portfolio-manager-java'
+    manifest {
+        attributes(
+                'Specification-Title': archiveBaseName,
+                'Specification-Version': project.version,
+                'Implementation-Title': archiveBaseName,
+                'Main-Class': javaMainClass,
+        )
+    }
+}
+
+application {
+    mainClass = javaMainClass
+}
+
+dependencies {
+    implementation "org.slf4j:slf4j-api:${log4jApiVersion}"
+
+    implementation "io.netty:netty-all:${nettyVersion}"
+    implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}

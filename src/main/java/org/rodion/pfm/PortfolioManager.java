@@ -2,7 +2,9 @@ package org.rodion.pfm;
 
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4J2LoggerFactory;
+import org.rodion.pfm.cli.PfmCommand;
 import org.rodion.pfm.cli.logging.PfmLoggingConfigurationFactory;
+import org.rodion.pfm.component.DaggerPfmComponent;
 
 /** Portfolio Manager bootstrap class */
 public final class PortfolioManager {
@@ -13,7 +15,8 @@ public final class PortfolioManager {
      */
     public static void main(final String... args) {
         setupLogging();
-        System.out.println("Hello world!");
+        final PfmCommand pfmCommand = DaggerPfmComponent.create().getPfmCommand();
+        System.out.println(pfmCommand);
     }
 
     /**

@@ -2,6 +2,7 @@ package org.rodion.pfm;
 
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4J2LoggerFactory;
+import org.rodion.pfm.cli.logging.PfmLoggingConfigurationFactory;
 
 /** Portfolio Manager bootstrap class */
 public final class PortfolioManager {
@@ -25,6 +26,16 @@ public final class PortfolioManager {
         } catch (Throwable t) {
             System.out.printf(
                     "Could not set netty log4j logger factory: %s - %s%n",
+                    t.getClass().getSimpleName(), t.getMessage());
+        }
+
+        try {
+            System.setProperty(
+                    "log4j.configurationFactory", PfmLoggingConfigurationFactory.class.getName());
+            System.setProperty("log4j.skipJansi", String.valueOf(false));
+        } catch (Throwable t) {
+            System.out.printf(
+                    "Could not set logging system property: %s - %s%n",
                     t.getClass().getSimpleName(), t.getMessage());
         }
     }

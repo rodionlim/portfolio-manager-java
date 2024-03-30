@@ -5,6 +5,8 @@ import io.netty.util.internal.logging.Log4J2LoggerFactory;
 import org.rodion.pfm.cli.PfmCommand;
 import org.rodion.pfm.cli.logging.PfmLoggingConfigurationFactory;
 import org.rodion.pfm.component.DaggerPfmComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Portfolio Manager bootstrap class */
 public final class PortfolioManager {
@@ -16,7 +18,8 @@ public final class PortfolioManager {
     public static void main(final String... args) {
         setupLogging();
         final PfmCommand pfmCommand = DaggerPfmComponent.create().getPfmCommand();
-        System.out.println(pfmCommand);
+        int exitCode = pfmCommand.parse();
+        System.exit(exitCode);
     }
 
     /**
@@ -41,5 +44,26 @@ public final class PortfolioManager {
                     "Could not set logging system property: %s - %s%n",
                     t.getClass().getSimpleName(), t.getMessage());
         }
+    }
+
+    /**
+     * Returns the first logger to be created. This is used to set the default uncaught exception
+     *
+     * @return Logger
+     */
+    public static Logger getFirstLogger() {
+        final Logger logger = LoggerFactory.getLogger(PortfolioManager.class);
+        Thread.setDefaultUncaughtExceptionHandler(slf4jExceptionHandler(logger));
+        Thread.currentThread().setUncaughtExceptionHandler(slf4jExceptionHandler(logger));
+
+        return logger;
+    }
+
+    private static Thread.UncaughtExceptionHandler slf4jExceptionHandler(final Logger logger) {
+        return (thread, error) -> {
+            if (logger.isErrorEnabled()) {
+                logger.error(String.format("Uncaught exception in thread \"%s\"", thread.getName()), error);
+            }
+        };
     }
 }

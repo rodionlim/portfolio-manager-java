@@ -2,8 +2,9 @@ package org.rodion.pfm.component;
 
 import dagger.Component;
 import org.rodion.pfm.cli.PfmCommand;
+import org.slf4j.Logger;
 
-import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 @Singleton
@@ -17,4 +18,7 @@ public interface PfmComponent {
      * @return PfmCommand
      */
     PfmCommand getPfmCommand();
+
+    @Named("pfmCommandLogger")
+    Logger getPfmCommandLogger();
 }

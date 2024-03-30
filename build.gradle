@@ -38,10 +38,12 @@ application {
 }
 
 dependencies {
-    implementation "org.slf4j:slf4j-api:${log4jApiVersion}"
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
 
     implementation "io.netty:netty-all:${nettyVersion}"
     implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+    implementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
+
     implementation "com.google.dagger:dagger:${daggerVersion}"
 
     testImplementation platform('org.junit:junit-bom:5.9.1')

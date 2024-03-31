@@ -1,6 +1,9 @@
 ext {
-    nettyVersion = "4.1.104.Final"
-    log4jVersion = "2.22.1"
-    slf4jVersion = "2.0.12"
     daggerVersion = "2.51"
+    log4jVersion = "2.22.1"
+    nettyVersion = "4.1.104.Final"
+    picocliVersion = "4.7.5"
+    slf4jVersion = "2.0.12"
+
+    googleJavaFormat = "1.21.0"
 }

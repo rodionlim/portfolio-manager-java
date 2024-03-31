@@ -8,15 +8,14 @@ import org.apache.logging.log4j.core.config.ConfigurationSource;
 /** Custom Log4J Configuration Factory for Portfolio Manager */
 public class PfmLoggingConfigurationFactory extends ConfigurationFactory {
 
-    @Override
-    protected String[] getSupportedTypes() {
-        return new String[] {".xml", "*"};
-    }
+  @Override
+  protected String[] getSupportedTypes() {
+    return new String[] {".xml", "*"};
+  }
 
-    @Override
-    public Configuration getConfiguration(
-            final LoggerContext loggerContext, final ConfigurationSource source) {
-        return new XmlExtensionConfiguration(loggerContext, source);
-    }
+  @Override
+  public Configuration getConfiguration(
+      final LoggerContext loggerContext, final ConfigurationSource source) {
+    return new XmlExtensionConfiguration(loggerContext, source);
+  }
 }
-

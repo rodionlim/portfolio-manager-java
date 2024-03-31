@@ -6,6 +6,7 @@ import static org.rodion.pfm.cli.DefaultCommandValues.getDefaultPfmDataPath;
 import java.io.InputStream;
 import java.nio.file.Path;
 import org.rodion.pfm.component.PfmComponent;
+import org.rodion.pfm.services.MarketDataServiceImpl;
 import org.slf4j.Logger;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -31,14 +32,36 @@ public class PfmCommand {
 
   private CommandLine commandLine;
 
+  private final PfmComponent pfmComponent;
+
+  private final MarketDataServiceImpl marketDataServiceImpl;
+
   @CommandLine.Option(
       names = {"--data-path"},
       paramLabel = MANDATORY_PATH_FORMAT_HELP,
       description = "The path to Portfolio Manager data directory (default: ${DEFAULT-VALUE})")
   final Path dataPath = getDefaultPfmDataPath(this);
 
+  /**
+   * Portfolio Manager command constructor.
+   *
+   * @param pfmComponent PfmComponent which acts as our application context
+   */
   public PfmCommand(final PfmComponent pfmComponent) {
+    this(pfmComponent, new MarketDataServiceImpl());
+  }
+
+  /**
+   * Overloaded Portfolio Manager command constructor visible for testing.
+   *
+   * @param pfmComponent PfmComponent which acts as our application context
+   * @param marketDataServiceImpl instance of MarketDataServiceImpl
+   */
+  protected PfmCommand(
+      final PfmComponent pfmComponent, final MarketDataServiceImpl marketDataServiceImpl) {
     this.logger = pfmComponent.getPfmCommandLogger();
+    this.pfmComponent = pfmComponent;
+    this.marketDataServiceImpl = marketDataServiceImpl;
     logger.info("Loaded pfm command");
   }
 

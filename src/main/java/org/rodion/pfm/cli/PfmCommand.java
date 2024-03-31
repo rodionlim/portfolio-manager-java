@@ -1,6 +1,10 @@
 package org.rodion.pfm.cli;
 
+import static org.rodion.pfm.cli.DefaultCommandValues.MANDATORY_PATH_FORMAT_HELP;
+import static org.rodion.pfm.cli.DefaultCommandValues.getDefaultPfmDataPath;
+
 import java.io.InputStream;
+import java.nio.file.Path;
 import org.rodion.pfm.component.PfmComponent;
 import org.slf4j.Logger;
 import picocli.CommandLine;
@@ -26,6 +30,12 @@ public class PfmCommand {
   private final Logger logger;
 
   private CommandLine commandLine;
+
+  @CommandLine.Option(
+      names = {"--data-path"},
+      paramLabel = MANDATORY_PATH_FORMAT_HELP,
+      description = "The path to Portfolio Manager data directory (default: ${DEFAULT-VALUE})")
+  final Path dataPath = getDefaultPfmDataPath(this);
 
   public PfmCommand(final PfmComponent pfmComponent) {
     this.logger = pfmComponent.getPfmCommandLogger();

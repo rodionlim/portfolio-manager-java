@@ -1,6 +1,5 @@
 package org.rodion.pfm.cli;
 
-import static org.rodion.pfm.cli.DefaultCommandValues.MANDATORY_PATH_FORMAT_HELP;
 import static org.rodion.pfm.cli.DefaultCommandValues.getDefaultPfmDataPath;
 
 import java.io.InputStream;
@@ -26,7 +25,7 @@ import picocli.CommandLine.IExecutionStrategy;
       "%n%n@|fg(cyan) To get started quickly, just choose a profile to run with suggested defaults:|@",
       "%n@|fg(cyan) for Mainnet|@ --profile=[full|light]",
     })
-public class PfmCommand {
+public class PfmCommand implements DefaultCommandValues, Runnable {
 
   private final Logger logger;
 
@@ -81,8 +80,15 @@ public class PfmCommand {
     // use terminal width for usage message
     commandLine.getCommandSpec().usageMessage().autoWidth(true);
 
-    return 0;
+    return parse(resultHandler, args);
   }
+
+  private int parse(final IExecutionStrategy resultHandler, final String... args) {
+    return commandLine.setExecutionStrategy(resultHandler).execute(args);
+  }
+
+  @Override
+  public void run() {}
 
   public void toCommandLine() {
     commandLine = new CommandLine(this, CommandLine.defaultFactory());

@@ -2,10 +2,10 @@ package org.rodion.pfm.cli;
 
 import static org.rodion.pfm.cli.DefaultCommandValues.getDefaultPfmDataPath;
 
+import com.google.common.annotations.VisibleForTesting;
 import java.io.InputStream;
 import java.nio.file.Path;
-
-import com.google.common.annotations.VisibleForTesting;
+import org.rodion.pfm.cli.subcommands.MarketDataSubCommand;
 import org.rodion.pfm.component.PfmComponent;
 import org.rodion.pfm.services.MarketDataServiceImpl;
 import org.slf4j.Logger;
@@ -83,6 +83,8 @@ public class PfmCommand implements DefaultCommandValues, Runnable {
     // use terminal width for usage message
     commandLine.getCommandSpec().usageMessage().autoWidth(true);
 
+    addSubCommands(in);
+
     return parse(resultHandler, args);
   }
 
@@ -95,5 +97,10 @@ public class PfmCommand implements DefaultCommandValues, Runnable {
 
   public void toCommandLine() {
     commandLine = new CommandLine(this, CommandLine.defaultFactory());
+  }
+
+  private void addSubCommands(final InputStream in) {
+    commandLine.addSubcommand(
+        MarketDataSubCommand.COMMAND_NAME, new MarketDataSubCommand(commandLine.getOut()));
   }
 }

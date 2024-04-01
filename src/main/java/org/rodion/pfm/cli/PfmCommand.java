@@ -4,6 +4,8 @@ import static org.rodion.pfm.cli.DefaultCommandValues.getDefaultPfmDataPath;
 
 import java.io.InputStream;
 import java.nio.file.Path;
+
+import com.google.common.annotations.VisibleForTesting;
 import org.rodion.pfm.component.PfmComponent;
 import org.rodion.pfm.services.MarketDataServiceImpl;
 import org.slf4j.Logger;
@@ -56,6 +58,7 @@ public class PfmCommand implements DefaultCommandValues, Runnable {
    * @param pfmComponent PfmComponent which acts as our application context
    * @param marketDataServiceImpl instance of MarketDataServiceImpl
    */
+  @VisibleForTesting
   protected PfmCommand(
       final PfmComponent pfmComponent, final MarketDataServiceImpl marketDataServiceImpl) {
     this.logger = pfmComponent.getPfmCommandLogger();

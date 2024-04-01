@@ -1,5 +1,6 @@
 ext {
     daggerVersion = "2.51"
+    guavaVersion = "33.1.0-jre"
     log4jVersion = "2.22.1"
     nettyVersion = "4.1.104.Final"
     picocliVersion = "4.7.5"

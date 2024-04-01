@@ -7,6 +7,7 @@ import picocli.CommandLine;
 
 @CommandLine.Command(
     name = COMMAND_NAME,
+    aliases = {"md"},
     description = "Fetch market data related queries",
     mixinStandardHelpOptions = true)
 public class MarketDataSubCommand implements Runnable {

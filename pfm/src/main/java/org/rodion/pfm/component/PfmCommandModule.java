@@ -13,7 +13,8 @@ public class PfmCommandModule {
   @Provides
   @Singleton
   PfmCommand providePfmCommand(final PfmComponent pfmComponent) {
-    final PfmCommand pfmCommand = new PfmCommand(pfmComponent);
+    final PfmCommand pfmCommand =
+        new PfmCommand(pfmComponent, pfmComponent.getPfmPluginContextImpl());
     pfmCommand.toCommandLine();
     return pfmCommand;
   }

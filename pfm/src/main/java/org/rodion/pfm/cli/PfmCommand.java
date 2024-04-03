@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import org.rodion.pfm.cli.subcommands.MarketDataSubCommand;
 import org.rodion.pfm.component.PfmComponent;
 import org.rodion.pfm.services.MarketDataServiceImpl;
+import org.rodion.pfm.services.PfmPluginContextImpl;
 import org.slf4j.Logger;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -35,7 +36,9 @@ public class PfmCommand implements DefaultCommandValues, Runnable {
 
   private final PfmComponent pfmComponent;
 
-  private final MarketDataServiceImpl marketDataServiceImpl;
+  private final PfmPluginContextImpl pfmPluginContext;
+
+  private final MarketDataServiceImpl marketDataService;
 
   @CommandLine.Option(
       names = {"--data-path"},
@@ -47,24 +50,29 @@ public class PfmCommand implements DefaultCommandValues, Runnable {
    * Portfolio Manager command constructor.
    *
    * @param pfmComponent PfmComponent which acts as our application context
+   * @param pfmPluginContext instance of PfmPluginContextImpl
    */
-  public PfmCommand(final PfmComponent pfmComponent) {
-    this(pfmComponent, new MarketDataServiceImpl());
+  public PfmCommand(final PfmComponent pfmComponent, final PfmPluginContextImpl pfmPluginContext) {
+    this(pfmComponent, pfmPluginContext, new MarketDataServiceImpl());
   }
 
   /**
    * Overloaded Portfolio Manager command constructor visible for testing.
    *
    * @param pfmComponent PfmComponent which acts as our application context
+   * @param pfmPluginContext instance of PfmPluginContextImpl
    * @param marketDataServiceImpl instance of MarketDataServiceImpl
    */
   @VisibleForTesting
   protected PfmCommand(
-      final PfmComponent pfmComponent, final MarketDataServiceImpl marketDataServiceImpl) {
+      final PfmComponent pfmComponent,
+      final PfmPluginContextImpl pfmPluginContext,
+      final MarketDataServiceImpl marketDataServiceImpl) {
     this.logger = pfmComponent.getPfmCommandLogger();
     this.pfmComponent = pfmComponent;
-    this.marketDataServiceImpl = marketDataServiceImpl;
-    logger.info("Loaded pfm command");
+    this.pfmPluginContext = pfmPluginContext;
+    this.marketDataService = marketDataServiceImpl;
+    logger.info("successfully loaded pfm command");
   }
 
   /**

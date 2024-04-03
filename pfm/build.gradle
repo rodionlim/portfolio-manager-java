@@ -55,6 +55,8 @@ application {
 dependencies {
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
 
+    implementation project(":plugin-api")
+
     implementation "com.google.dagger:dagger:${daggerVersion}"
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"

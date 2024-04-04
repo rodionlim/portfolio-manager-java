@@ -1,0 +1,89 @@
+import groovy.transform.Memoized
+
+import java.text.SimpleDateFormat
+
+plugins {
+    id 'com.diffplug.spotless' version '6.25.0'
+}
+
+if (!JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_21)) {
+    throw new GradleException("Java 21 or later is required to build Besu.\n" +
+            "  Detected version ${JavaVersion.current()}")
+}
+
+group = 'org.rodion.pfm'
+
+allprojects {
+    apply plugin: 'java-library'
+    apply from: "${rootDir}/gradle/versions.gradle"
+
+    version = calculateVersion()
+
+    repositories {
+        mavenCentral()
+    }
+
+    apply plugin: 'com.diffplug.spotless'
+    spotless {
+        java {
+            target fileTree('.') {
+                include '**/*.java'
+                exclude '**/build/**', '**/build-*/**'
+            }
+            toggleOffOn()
+            googleJavaFormat(googleJavaFormat)
+            removeUnusedImports()
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+    }
+}
+
+jar { enabled = false }
+
+@Memoized
+def calculateVersion() {
+    // Regex pattern for basic calendar versioning, with provision to omit patch rev
+    def calVerPattern = ~/\d+\.\d+(\.\d+)?(-.*)?/
+
+    if (project.hasProperty('version') && (project.version =~ calVerPattern)) {
+        return "${project.version}"
+    } else {
+        // If no version is supplied or it doesn't match the semantic versioning, calculate from git
+        println("Generating project version as supplied is version not semver: ${project.version}")
+        def gitDetails = getGitCommitDetails(10) // Adjust length as needed
+        return "${gitDetails.date}-develop-${gitDetails.hash}"
+    }
+}
+
+def getGitCommitDetails(length = 8) {
+    try {
+        def gitFolder = "$projectDir/.git/"
+        if (!file(gitFolder).isDirectory()) {
+            gitFolder = file(gitFolder).text.substring(length).trim() + "/"
+        }
+        def takeFromHash = length
+        def head = new File(gitFolder + "HEAD").text.split(":")
+        def isCommit = head.length == 1
+
+        def commitHash, refHeadFile
+        if (isCommit) {
+            commitHash = head[0].trim().take(takeFromHash)
+            refHeadFile = new File(gitFolder + "HEAD")
+        } else {
+            refHeadFile = new File(gitFolder + head[1].trim())
+            commitHash = refHeadFile.text.trim().take(takeFromHash)
+        }
+
+        // Use head file modification time as a proxy for the build date
+        def lastModified = new Date(refHeadFile.lastModified())
+        // Format the date as "yy.M" (e.g. 24.3 for March 2024)
+        def formattedDate = new SimpleDateFormat("yy.M").format(lastModified)
+
+        return [hash: commitHash, date: formattedDate]
+    } catch (Exception e) {
+        logger.info('Could not calculate git commit details, using defaults (run with --info for stacktrace)')
+        logger.info('Error retrieving git commit details', e)
+        return [hash: "xxxxxxxx", date: "00.0"]
+    }
+}

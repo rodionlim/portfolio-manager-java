@@ -1,22 +1,6 @@
 plugins {
-    id 'java-library'
     id 'application'
-    id 'com.diffplug.spotless' version '6.25.0'
 }
-
-group = 'org.rodion.pfm'
-version = '1.0-SNAPSHOT'
-
-if (!JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_21)) {
-    throw new GradleException("Java 21 or later is required to build Portfolio Manager.\n" +
-            "  Detected version ${JavaVersion.current()}")
-}
-
-repositories {
-    mavenCentral()
-}
-
-apply from: '../gradle/versions.gradle'
 
 ext {
     javaMainClass = "org.rodion.pfm.PortfolioManager"
@@ -29,22 +13,9 @@ jar {
                 'Specification-Title': archiveBaseName,
                 'Specification-Version': project.version,
                 'Implementation-Title': archiveBaseName,
+                'Implementation-Version': version,
                 'Main-Class': javaMainClass,
         )
-    }
-}
-
-spotless {
-    java {
-        target fileTree('.') {
-            include '**/*.java'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        toggleOffOn()
-        googleJavaFormat(googleJavaFormat)
-        removeUnusedImports()
-        trimTrailingWhitespace()
-        endWithNewline()
     }
 }
 

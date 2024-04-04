@@ -1,4 +1,3 @@
 rootProject.name = 'portfolio-manager-java'
-include 'plugin-api'
 include 'pfm'
-
+include 'plugin-api'

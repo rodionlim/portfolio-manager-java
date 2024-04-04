@@ -12,7 +12,7 @@ A command line application to value stocks and cryptocurrencies in your personal
 
 ## Installation
 
-1. Install Java 17 or higher
+1. Install Java 21 or higher
 2. Clone the repository to your local machine.
 3. ```./gradlew run --args=-h```
 

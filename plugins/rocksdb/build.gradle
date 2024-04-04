@@ -1,12 +1,13 @@
+apply plugin: 'java-library'
+
 jar {
-    archiveBaseName = 'plugin-api'
+    archiveBaseName = 'pfm-plugin-rocksdb'
     manifest {
         attributes(
                 'Specification-Title': archiveBaseName,
                 'Specification-Version': project.version,
                 'Implementation-Title': archiveBaseName,
-                'Implementation-Version': version,
-                'Automatic-Module-Name': 'org.rodion.pfm.plugin.api'
+                'Implementation-Version': calculateVersion()
         )
     }
 }

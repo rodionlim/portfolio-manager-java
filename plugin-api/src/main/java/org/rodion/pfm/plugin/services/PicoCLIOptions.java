@@ -6,17 +6,16 @@ package org.rodion.pfm.plugin.services;
  * picocli.CommandLine.addMixin call.
  *
  * <p>This service will be available during the registration callbacks.
- *
  */
 public interface PicoCLIOptions extends PfmService {
 
-    /**
-     * During the registration callback plugins can register CLI options that should be added to
-     * Portfolio Manager's CLI startup.
-     *
-     * @param namespace A namespace prefix. All registered options must start with this prefix
-     * @param optionObject The instance of the object to be inspected. PicoCLI will reflect the fields
-     *     of this object to extract the CLI options.
-     */
-    void addPicoCLIOptions(String namespace, Object optionObject);
+  /**
+   * During the registration callback plugins can register CLI options that should be added to
+   * Portfolio Manager's CLI startup.
+   *
+   * @param namespace A namespace prefix. All registered options must start with this prefix
+   * @param optionObject The instance of the object to be inspected. PicoCLI will reflect the fields
+   *     of this object to extract the CLI options.
+   */
+  void addPicoCLIOptions(String namespace, Object optionObject);
 }

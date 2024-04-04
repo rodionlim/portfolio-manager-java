@@ -3,6 +3,7 @@ package org.rodion.pfm.cli;
 import static org.rodion.pfm.cli.DefaultCommandValues.getDefaultPfmDataPath;
 
 import com.google.common.annotations.VisibleForTesting;
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
 import org.rodion.pfm.cli.subcommands.MarketDataSubCommand;
@@ -101,6 +102,8 @@ public class PfmCommand implements DefaultCommandValues, Runnable {
 
   private void preparePlugins() {
     pfmPluginContext.addService(PicoCLIOptions.class, new PicoCLIOptionsImpl(commandLine));
+
+    pfmPluginContext.registerPlugins(pluginsDir());
   }
 
   private int parse(final IExecutionStrategy resultHandler, final String... args) {
@@ -117,5 +120,14 @@ public class PfmCommand implements DefaultCommandValues, Runnable {
   private void addSubCommands(final InputStream in) {
     commandLine.addSubcommand(
         MarketDataSubCommand.COMMAND_NAME, new MarketDataSubCommand(commandLine.getOut()));
+  }
+
+  private Path pluginsDir() {
+    final String pluginsDir = System.getProperty("pfm.plugins.dir");
+    if (pluginsDir == null) {
+      return new File(System.getProperty("pfm.home", "."), "plugins").toPath();
+    } else {
+      return new File(pluginsDir).toPath();
+    }
   }
 }

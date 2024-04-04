@@ -7,8 +7,10 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import org.rodion.pfm.cli.subcommands.MarketDataSubCommand;
 import org.rodion.pfm.component.PfmComponent;
+import org.rodion.pfm.plugin.services.PicoCLIOptions;
 import org.rodion.pfm.services.MarketDataServiceImpl;
 import org.rodion.pfm.services.PfmPluginContextImpl;
+import org.rodion.pfm.services.PicoCLIOptionsImpl;
 import org.slf4j.Logger;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -72,7 +74,7 @@ public class PfmCommand implements DefaultCommandValues, Runnable {
     this.pfmComponent = pfmComponent;
     this.pfmPluginContext = pfmPluginContext;
     this.marketDataService = marketDataServiceImpl;
-    logger.info("successfully loaded pfm command");
+    logger.info("successfully loaded portfolio manager command");
   }
 
   /**
@@ -92,8 +94,13 @@ public class PfmCommand implements DefaultCommandValues, Runnable {
     commandLine.getCommandSpec().usageMessage().autoWidth(true);
 
     addSubCommands(in);
+    preparePlugins();
 
     return parse(resultHandler, args);
+  }
+
+  private void preparePlugins() {
+    pfmPluginContext.addService(PicoCLIOptions.class, new PicoCLIOptionsImpl(commandLine));
   }
 
   private int parse(final IExecutionStrategy resultHandler, final String... args) {

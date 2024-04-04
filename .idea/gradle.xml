@@ -11,6 +11,8 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/pfm" />
             <option value="$PROJECT_DIR$/plugin-api" />
+            <option value="$PROJECT_DIR$/plugins" />
+            <option value="$PROJECT_DIR$/plugins/rocksdb" />
           </set>
         </option>
       </GradleProjectSettings>

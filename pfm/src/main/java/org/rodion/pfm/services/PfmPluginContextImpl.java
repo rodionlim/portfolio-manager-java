@@ -10,6 +10,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.rodion.pfm.plugin.PfmContext;
 import org.rodion.pfm.plugin.PfmPlugin;
@@ -23,7 +24,9 @@ public class PfmPluginContextImpl implements PfmContext {
     /** Uninitialized lifecycle. */
     UNINITIALIZED,
     /** Registering lifecycle. */
-    REGISTERING
+    REGISTERING,
+    /** Registered lifecycle. */
+    REGISTERED
   }
 
   private Lifecycle state = Lifecycle.UNINITIALIZED;
@@ -33,6 +36,8 @@ public class PfmPluginContextImpl implements PfmContext {
   private final Map<Class<?>, ? super PfmService> serviceRegistry = new HashMap<>();
 
   private final List<PfmPlugin> plugins = new ArrayList<>();
+
+  private final List<String> pluginVersions = new ArrayList<>();
 
   final List<String> lines = new ArrayList<>();
 
@@ -76,6 +81,34 @@ public class PfmPluginContextImpl implements PfmContext {
 
     final ServiceLoader<PfmPlugin> serviceLoader =
         ServiceLoader.load(PfmPlugin.class, pluginLoader);
+
+    int pluginsCount = 0;
+    for (final PfmPlugin plugin : serviceLoader) {
+      pluginsCount++;
+      try {
+        plugin.register(this); // allow plugin to access portfolio manager via context
+        logger.info("Registered plugin of type {}.", plugin.getClass().getName());
+        String pluginVersion = getPluginVersion(plugin);
+        pluginVersions.add(pluginVersion);
+        lines.add(String.format("%s (%s)", plugin.getClass().getSimpleName(), pluginVersion));
+      } catch (final Exception e) {
+        logger.error(
+            "Error registering plugin of type "
+                + plugin.getClass().getName()
+                + ", start and stop will not be called.",
+            e);
+        lines.add(String.format("ERROR %s", plugin.getClass().getSimpleName()));
+        continue;
+      }
+      plugins.add(plugin);
+    }
+    logger.debug("Plugin registration complete.");
+    lines.add(
+        String.format(
+            "TOTAL = %d of %d plugins successfully loaded", plugins.size(), pluginsCount));
+    lines.add(String.format("from %s", pluginsDir.toAbsolutePath()));
+
+    state = Lifecycle.REGISTERED;
   }
 
   private Optional<ClassLoader> pluginDirectoryLoader(final Path pluginsDir) {
@@ -97,6 +130,19 @@ public class PfmPluginContextImpl implements PfmContext {
       logger.info("Plugin directory does not exist, skipping registration. - {}", pluginsDir);
     }
     return Optional.empty();
+  }
+
+  private String getPluginVersion(final PfmPlugin plugin) {
+    final Package pluginPackage = plugin.getClass().getPackage();
+    final String implTitle =
+        Optional.ofNullable(pluginPackage.getImplementationTitle())
+            .filter(Predicate.not(String::isBlank))
+            .orElse(plugin.getClass().getSimpleName());
+    final String implVersion =
+        Optional.ofNullable(pluginPackage.getImplementationVersion())
+            .filter(Predicate.not(String::isBlank))
+            .orElse("<Unknown Version>");
+    return implTitle + "/v" + implVersion;
   }
 
   private static URL pathToURIOrNull(final Path p) {

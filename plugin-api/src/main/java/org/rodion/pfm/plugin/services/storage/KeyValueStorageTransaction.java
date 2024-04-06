@@ -10,7 +10,7 @@ public interface KeyValueStorageTransaction {
   /**
    * Associates the specified value with the specified key.
    *
-   * <p>If a previously value had been store against the given key, the old value is replaced by the
+   * <p>If a previous value had been store against the given key, the old value is replaced by the
    * given value.
    *
    * @param key the given value is to be associated with.

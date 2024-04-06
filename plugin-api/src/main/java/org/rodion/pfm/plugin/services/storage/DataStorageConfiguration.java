@@ -13,13 +13,4 @@ public interface DataStorageConfiguration {
    */
   @Unstable
   DataStorageFormat getDatabaseFormat();
-
-  /**
-   * Whether receipt compaction is enabled. When enabled this reduces the storage needed for
-   * receipts.
-   *
-   * @return Whether receipt compaction is enabled
-   */
-  @Unstable
-  boolean getReceiptCompactionEnabled();
 }

@@ -49,10 +49,12 @@ public class RocksDBPlugin implements PfmPlugin {
   public void stop() {}
 
   private void createAndRegister(final StorageService service) {
-    throw new NotImplementedException();
+    logger.error("Not yet implemented");
   }
 
   private void createFactoriesAndRegisterWithStorageService() {
+    var svc = context.getService(StorageService.class);
+
     context
         .getService(StorageService.class)
         .ifPresentOrElse(

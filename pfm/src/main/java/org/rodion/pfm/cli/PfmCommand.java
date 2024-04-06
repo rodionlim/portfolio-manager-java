@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import org.rodion.pfm.cli.subcommands.MarketDataSubCommand;
 import org.rodion.pfm.component.PfmComponent;
 import org.rodion.pfm.plugin.services.PicoCLIOptions;
+import org.rodion.pfm.plugin.services.storage.rocksdb.RocksDBPlugin;
 import org.rodion.pfm.services.MarketDataServiceImpl;
 import org.rodion.pfm.services.PfmPluginContextImpl;
 import org.rodion.pfm.services.PicoCLIOptionsImpl;
@@ -42,6 +43,8 @@ public class PfmCommand implements DefaultCommandValues, Runnable {
   private final PfmPluginContextImpl pfmPluginContext;
 
   private final MarketDataServiceImpl marketDataService;
+
+  private RocksDBPlugin rocksDBPlugin;
 
   @CommandLine.Option(
       names = {"--data-path"},
@@ -102,6 +105,9 @@ public class PfmCommand implements DefaultCommandValues, Runnable {
 
   private void preparePlugins() {
     pfmPluginContext.addService(PicoCLIOptions.class, new PicoCLIOptionsImpl(commandLine));
+
+    rocksDBPlugin = new RocksDBPlugin();
+    rocksDBPlugin.register(pfmPluginContext);
 
     pfmPluginContext.registerPlugins(pluginsDir());
   }

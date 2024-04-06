@@ -27,6 +27,7 @@ dependencies {
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
 
     implementation project(":plugin-api")
+    implementation project(":plugins:rocksdb")
 
     implementation "com.google.dagger:dagger:${daggerVersion}"
     implementation "com.google.guava:guava:${guavaVersion}"

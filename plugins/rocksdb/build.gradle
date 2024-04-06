@@ -1,0 +1,21 @@
+jar {
+    archiveBaseName = 'pfm-plugin-rocksdb'
+    manifest {
+        attributes(
+                'Specification-Title': archiveBaseName,
+                'Specification-Version': project.version,
+                'Implementation-Title': archiveBaseName,
+                'Implementation-Version': calculateVersion()
+        )
+    }
+}
+
+dependencies {
+    api project(":plugin-api")
+
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+
+    implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+    implementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
+    implementation "info.picocli:picocli:${picocliVersion}"
+}

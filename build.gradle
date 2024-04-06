@@ -7,7 +7,7 @@ plugins {
 }
 
 if (!JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_21)) {
-    throw new GradleException("Java 21 or later is required to build Besu.\n" +
+    throw new GradleException("Java 21 or later is required to build Portfolio Manager.\n" +
             "  Detected version ${JavaVersion.current()}")
 }
 

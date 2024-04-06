@@ -1,10 +1,12 @@
 ext {
+    commonsLang3Version = "3.14.0"
     daggerVersion = "2.51"
     guavaVersion = "33.1.0-jre"
     log4jVersion = "2.22.1"
     nettyVersion = "4.1.104.Final"
     picocliVersion = "4.7.5"
     slf4jVersion = "2.0.12"
+    ioTmioTuweniVersion = "2.4.2"
 
     googleJavaFormat = "1.21.0"
 }

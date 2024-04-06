@@ -10,3 +10,8 @@ jar {
         )
     }
 }
+
+dependencies {
+    api "org.apache.commons:commons-lang3:${commonsLang3Version}"
+    api "io.tmio:tuweni-bytes:${ioTmioTuweniVersion}"
+}

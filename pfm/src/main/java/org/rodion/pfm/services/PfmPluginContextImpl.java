@@ -18,6 +18,7 @@ import org.rodion.pfm.plugin.services.PfmService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** The Portfolio Manager plugin context implementation. */
 public class PfmPluginContextImpl implements PfmContext {
 
   private enum Lifecycle {

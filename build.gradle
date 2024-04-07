@@ -14,6 +14,8 @@ if (!JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_21)) {
 
 group = 'org.rodion.pfm'
 
+defaultTasks 'build', 'javadoc'
+
 allprojects {
     apply plugin: 'java-library'
     apply plugin: 'io.spring.dependency-management'
@@ -38,6 +40,14 @@ allprojects {
             trimTrailingWhitespace()
             endWithNewline()
         }
+    }
+
+    javadoc {
+        options.addStringOption('Xdoclint:all,-missing', '-quiet')
+        options.addStringOption('Xmaxerrs','65535')
+        options.addStringOption('Xmaxwarns','65535')
+        options.addStringOption('Xwerror', '-html5')
+        options.encoding = 'UTF-8'
     }
 }
 

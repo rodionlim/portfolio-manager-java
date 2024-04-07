@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import org.rodion.pfm.plugin.services.storage.DataStorageFormat;
 import org.rodion.pfm.plugin.services.storage.SegmentIdentifier;
 
+// Generic key value segments in Portfolio Manager
 public enum KeyValueSegmentIdentifier implements SegmentIdentifier {
   DEFAULT("default".getBytes(StandardCharsets.UTF_8)),
   MARKET_DATA(new byte[] {1}, true, true),

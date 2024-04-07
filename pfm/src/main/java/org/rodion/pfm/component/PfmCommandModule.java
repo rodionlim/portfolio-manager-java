@@ -8,6 +8,10 @@ import org.rodion.pfm.PortfolioManager;
 import org.rodion.pfm.cli.PfmCommand;
 import org.slf4j.Logger;
 
+/**
+ * A dagger module that know how to create the PfmCommand, which collects all configuration
+ * settings.
+ */
 @Module
 public class PfmCommandModule {
   @Provides

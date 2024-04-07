@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import picocli.CommandLine;
 
+/** The interface Default command values. */
 public interface DefaultCommandValues {
 
   /** The constant MANDATORY_PATH_FORMAT_HELP. */

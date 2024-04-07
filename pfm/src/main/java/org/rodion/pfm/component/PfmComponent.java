@@ -7,6 +7,7 @@ import org.rodion.pfm.cli.PfmCommand;
 import org.rodion.pfm.services.PfmPluginContextImpl;
 import org.slf4j.Logger;
 
+/** An application context that knows how to provide dependencies based on Dagger setup. */
 @Singleton
 @Component(modules = {PfmCommandModule.class, PfmPluginContextModule.class})
 public interface PfmComponent {

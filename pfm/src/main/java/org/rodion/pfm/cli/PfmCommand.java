@@ -20,6 +20,8 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.IExecutionStrategy;
 
+/** Represents the main Portfolio Manager CLI command that runs the PFM full node. */
+@SuppressWarnings("FieldCanBeLocal") // because Picocli injected fields report false positives
 @Command(
     description = "This command runs the Portfolio Manager client full node.",
     abbreviateSynopsis = true,

@@ -12,7 +12,7 @@ import picocli.CommandLine.RunLast;
 /** Portfolio Manager bootstrap class */
 public final class PortfolioManager {
   /**
-   * The main entrypoint to PFM application
+   * The main entrypoint to Portfolio Manager application
    *
    * @param args command line arguments.
    */

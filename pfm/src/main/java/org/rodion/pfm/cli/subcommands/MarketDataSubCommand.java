@@ -5,6 +5,7 @@ import static org.rodion.pfm.cli.subcommands.MarketDataSubCommand.COMMAND_NAME;
 import java.io.PrintWriter;
 import picocli.CommandLine;
 
+/** Market Data subcommand */
 @CommandLine.Command(
     name = COMMAND_NAME,
     aliases = {"md"},

@@ -1,12 +1,17 @@
 package org.rodion.pfm.plugin.services.storage.rocksdb;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.NotImplementedException;
 import org.rodion.pfm.plugin.PfmContext;
 import org.rodion.pfm.plugin.PfmPlugin;
 import org.rodion.pfm.plugin.services.PicoCLIOptions;
 import org.rodion.pfm.plugin.services.StorageService;
+import org.rodion.pfm.plugin.services.storage.SegmentIdentifier;
 import org.rodion.pfm.plugin.services.storage.rocksdb.configuration.RocksDBCLIOptions;
+import org.rodion.pfm.plugin.services.storage.rocksdb.configuration.RocksDBFactoryConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,12 +54,13 @@ public class RocksDBPlugin implements PfmPlugin {
   public void stop() {}
 
   private void createAndRegister(final StorageService service) {
-    logger.error("Not yet implemented");
+    final List<SegmentIdentifier> segments = service.getAllSegmentIdentifiers();
+    final Supplier<RocksDBFactoryConfiguration> configuration =
+        Suppliers.memoize(options::toDomainObject);
+    throw new NotImplementedException();
   }
 
   private void createFactoriesAndRegisterWithStorageService() {
-    var svc = context.getService(StorageService.class);
-
     context
         .getService(StorageService.class)
         .ifPresentOrElse(

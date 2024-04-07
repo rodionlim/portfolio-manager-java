@@ -7,7 +7,8 @@ import org.rodion.pfm.plugin.services.storage.SegmentIdentifier;
 
 public enum KeyValueSegmentIdentifier implements SegmentIdentifier {
   DEFAULT("default".getBytes(StandardCharsets.UTF_8)),
-  BLOCKCHAIN(new byte[] {1}, true, true);
+  MARKET_DATA(new byte[] {1}, true, true),
+  BLOTTER(new byte[] {2}, true, true);
 
   private final byte[] id;
   private final EnumSet<DataStorageFormat> formats;

@@ -11,12 +11,12 @@ jar {
 }
 
 dependencies {
-    api project(":plugin-api")
+    api project(':plugin-api')
 
-    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation 'org.slf4j:slf4j-api'
 
-    implementation "com.google.guava:guava:${guavaVersion}"
-    implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
-    implementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
-    implementation "info.picocli:picocli:${picocliVersion}"
+    implementation 'com.google.guava:guava'
+    implementation 'org.apache.logging.log4j:log4j-core'
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl'
+    implementation 'info.picocli:picocli'
 }

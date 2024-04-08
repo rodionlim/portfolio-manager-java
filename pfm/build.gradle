@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-    javaMainClass = "org.rodion.pfm.PortfolioManager"
+    javaMainClass = "com.rodion.pfm.PortfolioManager"
 }
 
 jar {

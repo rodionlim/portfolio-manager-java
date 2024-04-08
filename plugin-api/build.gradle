@@ -6,7 +6,7 @@ jar {
                 'Specification-Version': project.version,
                 'Implementation-Title': archiveBaseName,
                 'Implementation-Version': version,
-                'Automatic-Module-Name': 'org.rodion.pfm.plugin.api'
+                'Automatic-Module-Name': 'com.rodion.pfm.plugin.api'
         )
     }
 }

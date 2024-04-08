@@ -1,0 +1,17 @@
+jar {
+    archiveBaseName = 'pfm-kvstore'
+    manifest {
+        attributes(
+                'Specification-Title': archiveBaseName,
+                'Specification-Version': project.version,
+                'Implementation-Title': archiveBaseName,
+                'Implementation-Version': calculateVersion()
+        )
+    }
+}
+
+dependencies {
+    api project(':plugin-api')
+    api 'org.slf4j:slf4j-api'
+    implementation 'com.google.guava:guava'
+}

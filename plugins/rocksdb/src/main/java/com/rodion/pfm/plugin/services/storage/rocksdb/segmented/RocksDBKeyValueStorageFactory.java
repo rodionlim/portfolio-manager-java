@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +92,45 @@ public class RocksDBKeyValueStorageFactory implements KeyValueStorageFactory {
     if (requiresInit()) {
       init(commonConfiguration);
     }
-    return null;
+
+    // safety check to see that segments all exist within configured segments
+    if (!new HashSet<>(configuredSegments).containsAll(segments)) {
+      throw new StorageException(
+          "Attempted to create storage for segments that are not configured: "
+              + segments.stream()
+                  .filter(segment -> !configuredSegments.contains(segment))
+                  .map(SegmentIdentifier::toString)
+                  .collect(Collectors.joining(", ")));
+    }
+
+    if (segmentedStorage == null) {
+      final List<SegmentIdentifier> segmentsForFormat =
+          configuredSegments.stream()
+              .filter(
+                  segmentId ->
+                      segmentId.includeInDatabaseFormat(
+                          databaseMetadata.getVersionedStorageFormat().getFormat()))
+              .toList();
+
+      // It's probably a good idea for the creation logic to be entirely dependent on the database
+      // version. Introducing intermediate booleans that represent database properties and
+      // dispatching creation logic based on them is error-prone.
+      switch (databaseMetadata.getVersionedStorageFormat().getFormat()) {
+        case FOREST -> {
+          logger.debug("FOREST mode detected, using TransactionDB.");
+          segmentedStorage =
+              new TransactionDBRocksDBColumnarKeyValueStorage(
+                  rocksDBConfiguration, segmentsForFormat, ignorableSegments);
+        }
+        case BONSAI -> {
+          logger.debug("BONSAI mode detected, Using OptimisticTransactionDB.");
+          segmentedStorage =
+              new OptimisticRocksDBColumnarKeyValueStorage(
+                  rocksDBConfiguration, segmentsForFormat, ignorableSegments);
+        }
+      }
+    }
+    return segmentedStorage;
   }
 
   @Override

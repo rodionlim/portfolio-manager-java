@@ -1,5 +1,5 @@
 rootProject.name = 'portfolio-manager-java'
-include 'pfm'
+include 'adelie'
 include 'plugin-api'
 include 'plugins:rocksdb'
 include 'services'

@@ -12,7 +12,7 @@ if (!JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_21)) {
             "  Detected version ${JavaVersion.current()}")
 }
 
-group = 'com.rodion.pfm'
+group = 'com.rodion.adelie'
 
 defaultTasks 'build', 'javadoc'
 

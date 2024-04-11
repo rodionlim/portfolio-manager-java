@@ -1,6 +1,6 @@
-# Portfolio Valuation Tool
+# Portfolio Valuation Tool - Adélie
 
-A command line application to value stocks and cryptocurrencies in your personal portfolio.
+A command line application (Adélie) to value stocks and cryptocurrencies in your personal portfolio.
 
 ## Features
 

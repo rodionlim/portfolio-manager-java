@@ -1,0 +1,47 @@
+plugins {
+    id 'application'
+}
+
+ext {
+    javaMainClass = "com.rodion.adelie.PortfolioManager"
+}
+
+jar {
+    archiveBaseName = 'portfolio-manager-java'
+    manifest {
+        attributes(
+                'Specification-Title': archiveBaseName,
+                'Specification-Version': project.version,
+                'Implementation-Title': archiveBaseName,
+                'Implementation-Version': version,
+                'Main-Class': javaMainClass,
+        )
+    }
+}
+
+application {
+    mainClass = javaMainClass
+}
+
+dependencies {
+    implementation 'org.slf4j:slf4j-api'
+
+    implementation project(":plugin-api")
+    implementation project(":plugins:rocksdb")
+
+    implementation 'com.google.dagger:dagger'
+    implementation 'com.google.guava:guava'
+    implementation 'org.apache.logging.log4j:log4j-core'
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl'
+    implementation 'info.picocli:picocli'
+    implementation 'io.netty:netty-all'
+
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    annotationProcessor 'com.google.dagger:dagger-compiler'
+}
+
+test {
+    useJUnitPlatform()
+}

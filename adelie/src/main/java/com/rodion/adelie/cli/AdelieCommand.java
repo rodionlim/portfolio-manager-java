@@ -3,6 +3,7 @@ package com.rodion.adelie.cli;
 import static com.rodion.adelie.cli.DefaultCommandValues.getDefaultAdelieDataPath;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.rodion.adelie.cli.options.stable.LoggingLevelOption;
 import com.rodion.adelie.cli.subcommands.MarketDataSubCommand;
 import com.rodion.adelie.component.AdelieComponent;
 import com.rodion.adelie.plugin.services.PicoCLIOptions;
@@ -12,6 +13,7 @@ import com.rodion.adelie.services.AdeliePluginContextImpl;
 import com.rodion.adelie.services.MarketDataServiceImpl;
 import com.rodion.adelie.services.PicoCLIOptionsImpl;
 import com.rodion.adelie.services.StorageServiceImpl;
+import com.rodion.adelie.util.LogConfigurator;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -39,6 +41,8 @@ import picocli.CommandLine.IExecutionStrategy;
 public class AdelieCommand implements DefaultCommandValues, Runnable {
 
   private final Logger logger;
+
+  private final LoggingLevelOption loggingLevelOption = LoggingLevelOption.create();
 
   private CommandLine commandLine;
 
@@ -92,7 +96,7 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
     this.marketDataService = marketDataServiceImpl;
     this.storageService = storageServiceImpl;
 
-    logger.info("successfully loaded adelie portfolio manager command");
+    logger.info("Successfully loaded Adélie portfolio manager command");
   }
 
   /**
@@ -111,6 +115,7 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
     // use terminal width for usage message
     commandLine.getCommandSpec().usageMessage().autoWidth(true);
 
+    handleStableOptions();
     addSubCommands(in);
     preparePlugins();
 
@@ -132,7 +137,15 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
   }
 
   @Override
-  public void run() {}
+  public void run() {
+    try {
+      configureLogging(true);
+      logger.info("Starting Adélie");
+    } catch (final Exception e) {
+      logger.error("Failed to start Adélie", e);
+      throw new CommandLine.ParameterException(this.commandLine, e.getMessage(), e);
+    }
+  }
 
   public void toCommandLine() {
     commandLine = new CommandLine(this, CommandLine.defaultFactory());
@@ -150,5 +163,27 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
     } else {
       return new File(pluginsDir).toPath();
     }
+  }
+
+  /**
+   * Configure logging framework for Adelie
+   *
+   * @param announce sets to true to print the logging level on standard output
+   */
+  public void configureLogging(final boolean announce) {
+    // To change the configuration if color was enabled/disabled
+    LogConfigurator.reconfigure();
+    // set log level per CLI flags
+    final String logLevel = loggingLevelOption.getLogLevel();
+    if (logLevel != null) {
+      if (announce) {
+        System.out.println("Setting logging level to " + logLevel);
+      }
+      LogConfigurator.setLevel("", logLevel);
+    }
+  }
+
+  private void handleStableOptions() {
+    commandLine.addMixin("Logging level", loggingLevelOption);
   }
 }

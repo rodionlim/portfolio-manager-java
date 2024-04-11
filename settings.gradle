@@ -5,4 +5,5 @@ include 'plugins:rocksdb'
 include 'services'
 include 'services:kvstore'
 findProject(':services:kvstore')?.name = 'kvstore'
+include 'util'
 

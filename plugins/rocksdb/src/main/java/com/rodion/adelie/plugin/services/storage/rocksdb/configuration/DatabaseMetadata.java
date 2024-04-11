@@ -47,7 +47,8 @@ public class DatabaseMetadata {
    */
   public static DatabaseMetadata defaultForNewDb(final AdelieConfiguration adelieConfiguration) {
     return new DatabaseMetadata(
-        BaseVersionedStorageFormat.defaultForNewDB(adelieConfiguration.getDataStorageConfiguration()));
+        BaseVersionedStorageFormat.defaultForNewDB(
+            adelieConfiguration.getDataStorageConfiguration()));
   }
 
   /**

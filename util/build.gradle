@@ -1,0 +1,19 @@
+jar {
+    archiveBaseName = 'besu-util'
+    manifest {
+        attributes(
+                'Specification-Title': archiveBaseName,
+                'Specification-Version': project.version,
+                'Implementation-Title': archiveBaseName,
+                'Implementation-Version': calculateVersion(),
+                'Automatic-Module-Name': 'com.rodion.adelie.internal.util'
+        )
+    }
+}
+
+dependencies {
+    api 'org.slf4j:slf4j-api'
+
+    implementation 'org.apache.logging.log4j:log4j-core'
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl'
+}

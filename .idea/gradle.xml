@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/plugins/rocksdb" />
             <option value="$PROJECT_DIR$/services" />
             <option value="$PROJECT_DIR$/services/kvstore" />
+            <option value="$PROJECT_DIR$/util" />
           </set>
         </option>
       </GradleProjectSettings>

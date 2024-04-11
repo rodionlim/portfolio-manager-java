@@ -26,6 +26,7 @@ application {
 dependencies {
     implementation 'org.slf4j:slf4j-api'
 
+    implementation project(":pfm:core")
     implementation project(":plugin-api")
     implementation project(":plugins:rocksdb")
     implementation project(":util")

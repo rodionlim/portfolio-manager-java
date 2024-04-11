@@ -17,6 +17,9 @@ public interface DefaultCommandValues {
   /** The constant DEFAULT_DATA_DIR_PATH. */
   String DEFAULT_DATA_DIR_PATH = "./build/data";
 
+  /** The constant DEFAULT_KEY_VALUE_STORAGE_NAME. */
+  String DEFAULT_KEY_VALUE_STORAGE_NAME = "rocksdb";
+
   /**
    * Gets default portfolio manager data path.
    *

@@ -6,13 +6,15 @@ import com.google.common.annotations.VisibleForTesting;
 import com.rodion.adelie.cli.options.stable.LoggingLevelOption;
 import com.rodion.adelie.cli.subcommands.MarketDataSubCommand;
 import com.rodion.adelie.component.AdelieComponent;
+import com.rodion.adelie.controller.AdelieController;
+import com.rodion.adelie.controller.AdelieControllerBuilder;
+import com.rodion.adelie.pfm.storage.keyvalue.KeyValueStorageProvider;
+import com.rodion.adelie.pfm.storage.keyvalue.KeyValueStorageProviderBuilder;
 import com.rodion.adelie.plugin.services.PicoCLIOptions;
 import com.rodion.adelie.plugin.services.StorageService;
+import com.rodion.adelie.plugin.services.exception.StorageException;
 import com.rodion.adelie.plugin.services.storage.rocksdb.RocksDBPlugin;
-import com.rodion.adelie.services.AdeliePluginContextImpl;
-import com.rodion.adelie.services.MarketDataServiceImpl;
-import com.rodion.adelie.services.PicoCLIOptionsImpl;
-import com.rodion.adelie.services.StorageServiceImpl;
+import com.rodion.adelie.services.*;
 import com.rodion.adelie.util.LogConfigurator;
 import java.io.File;
 import java.io.InputStream;
@@ -42,6 +44,9 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
 
   private final Logger logger;
 
+  /** The constant DATABASE_PATH. */
+  public static final String DATABASE_PATH = "database";
+
   private final LoggingLevelOption loggingLevelOption = LoggingLevelOption.create();
 
   private CommandLine commandLine;
@@ -62,8 +67,20 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
       description = "The path to Portfolio Manager data directory (default: ${DEFAULT-VALUE})")
   final Path dataPath = getDefaultAdelieDataPath(this);
 
+  @SuppressWarnings({"FieldCanBeFinal", "FieldMayBeFinal"}) // PicoCLI requires non-final Strings.
+  @CommandLine.Option(
+      names = {"--key-value-storage"},
+      description = "Identity for the key-value storage to be used.",
+      arity = "1")
+  private String keyValueStorageName = DEFAULT_KEY_VALUE_STORAGE_NAME;
+
+  private KeyValueStorageProvider keyValueStorageProvider;
+  private AdelieConfigurationImpl pluginCommonConfiguration;
+  private AdelieControllerBuilder controllerBuilderFactory;
+  private AdelieController adelieController;
+
   /**
-   * Portfolio Manager command constructor.
+   * Adelie Portfolio Manager command constructor.
    *
    * @param adelieComponent AdelieComponent which acts as our application context
    * @param adeliePluginContext instance of AdeliePluginContextImpl
@@ -141,6 +158,7 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
     try {
       configureLogging(true);
       logger.info("Starting Adélie");
+      adelieController = buildController(); // add reference to kv storage
     } catch (final Exception e) {
       logger.error("Failed to start Adélie", e);
       throw new CommandLine.ParameterException(this.commandLine, e.getMessage(), e);
@@ -185,5 +203,57 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
 
   private void handleStableOptions() {
     commandLine.addMixin("Logging level", loggingLevelOption);
+  }
+
+  /**
+   * Builds AdelieController
+   *
+   * @return instance of AdelieController
+   */
+  public AdelieController buildController() {
+    try {
+      return this.adelieComponent == null
+          ? getControllerBuilder().build()
+          : getControllerBuilder().adelieComponent(this.adelieComponent).build();
+    } catch (final Exception e) {
+      throw new CommandLine.ExecutionException(this.commandLine, e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Builds AdelieControllerBuilder which can be used to build AdelieController
+   *
+   * @return instance of AdelieControllerBuilder
+   */
+  public AdelieControllerBuilder getControllerBuilder() {
+    pluginCommonConfiguration.init(dataDir(), dataDir().resolve(DATABASE_PATH));
+    final KeyValueStorageProvider storageProvider = keyValueStorageProvider(keyValueStorageName);
+    return controllerBuilderFactory.dataDirectory(dataDir()).storageProvider(storageProvider);
+  }
+
+  /**
+   * Returns data directory used by Adelie. Visible as it is accessed by other subcommands.
+   *
+   * @return Path representing data directory.
+   */
+  public Path dataDir() {
+    return dataPath.toAbsolutePath();
+  }
+
+  private KeyValueStorageProvider keyValueStorageProvider(final String name) {
+    if (this.keyValueStorageProvider == null) {
+      this.keyValueStorageProvider =
+          new KeyValueStorageProviderBuilder()
+              .withStorageFactory(
+                  storageService
+                      .getByName(name)
+                      .orElseThrow(
+                          () ->
+                              new StorageException(
+                                  "No KeyValueStorageFactory found for key: " + name)))
+              .withCommonConfiguration(pluginCommonConfiguration)
+              .build();
+    }
+    return this.keyValueStorageProvider;
   }
 }

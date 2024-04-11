@@ -6,4 +6,7 @@ include 'services'
 include 'services:kvstore'
 findProject(':services:kvstore')?.name = 'kvstore'
 include 'util'
+include 'pfm'
+include 'pfm:core'
+findProject(':pfm:core')?.name = 'core'
 

@@ -1,8 +1,11 @@
 package com.rodion.adelie.cli;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.rodion.adelie.cli.DefaultCommandValues.getDefaultAdelieDataPath;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.rodion.adelie.Runner;
+import com.rodion.adelie.RunnerBuilder;
 import com.rodion.adelie.cli.options.stable.LoggingLevelOption;
 import com.rodion.adelie.cli.subcommands.MarketDataSubCommand;
 import com.rodion.adelie.component.AdelieComponent;
@@ -74,6 +77,7 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
       arity = "1")
   private String keyValueStorageName = DEFAULT_KEY_VALUE_STORAGE_NAME;
 
+  private final RunnerBuilder runnerBuilder;
   private KeyValueStorageProvider keyValueStorageProvider;
   private final AdelieConfigurationImpl pluginCommonConfiguration;
   private final AdelieControllerBuilder controllerBuilderFactory;
@@ -87,10 +91,12 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
    */
   public AdelieCommand(
       final AdelieComponent adelieComponent,
+      final RunnerBuilder runnerBuilder,
       final AdelieControllerBuilder controllerBuilderFactory,
       final AdeliePluginContextImpl adeliePluginContext) {
     this(
         adelieComponent,
+        runnerBuilder,
         controllerBuilderFactory,
         adeliePluginContext,
         new MarketDataServiceImpl(),
@@ -108,6 +114,7 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
   @VisibleForTesting
   protected AdelieCommand(
       final AdelieComponent adelieComponent,
+      final RunnerBuilder runnerBuilder,
       final AdelieControllerBuilder controllerBuilderFactory,
       final AdeliePluginContextImpl adeliePluginContext,
       final MarketDataServiceImpl marketDataServiceImpl,
@@ -118,6 +125,7 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
     this.controllerBuilderFactory = controllerBuilderFactory;
     this.marketDataService = marketDataServiceImpl;
     this.pluginCommonConfiguration = new AdelieConfigurationImpl();
+    this.runnerBuilder = runnerBuilder;
     this.storageService = storageServiceImpl;
 
     logger.info("Successfully loaded Adélie Portfolio Manager command");
@@ -166,6 +174,10 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
       configureLogging(true);
       logger.info("Starting Adélie Portfolio Manager");
       adelieController = buildController(); // add reference to kv storage
+      var runner = buildRunner();
+      startPlugins();
+      runner.startPfmMainLoop();
+      runner.awaitStop();
     } catch (final Exception e) {
       logger.error("Failed to start Adélie Portfolio Manager", e);
       throw new CommandLine.ParameterException(this.commandLine, e.getMessage(), e);
@@ -262,5 +274,35 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
               .build();
     }
     return this.keyValueStorageProvider;
+  }
+
+  private Runner buildRunner() {
+    checkNotNull(adelieController);
+
+    var runner = runnerBuilder.adelieController(adelieController).dataDir(dataDir()).build();
+    addShutdownHook(runner);
+
+    return runner;
+  }
+
+  private void addShutdownHook(final Runner runner) {
+    Runtime.getRuntime()
+        .addShutdownHook(
+            new Thread(
+                () -> {
+                  try {
+                    logger.info("Shutdown triggered");
+                    adeliePluginContext.stopPlugins();
+                    runner.close();
+                    LogConfigurator.shutdown();
+                  } catch (final Exception e) {
+                    logger.error("Failed to stop Adelie");
+                  }
+                },
+                "AdelieCommand-Shutdown-Hook"));
+  }
+
+  private void startPlugins() {
+    adeliePluginContext.startPlugins();
   }
 }

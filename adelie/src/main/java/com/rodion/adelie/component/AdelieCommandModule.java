@@ -1,6 +1,7 @@
 package com.rodion.adelie.component;
 
 import com.rodion.adelie.Adelie;
+import com.rodion.adelie.RunnerBuilder;
 import com.rodion.adelie.cli.AdelieCommand;
 import com.rodion.adelie.controller.AdelieControllerBuilder;
 import dagger.Module;
@@ -21,6 +22,7 @@ public class AdelieCommandModule {
     final AdelieCommand adelieCommand =
         new AdelieCommand(
             adelieComponent,
+            new RunnerBuilder(),
             new AdelieControllerBuilder(),
             adelieComponent.getAdeliePluginContextImpl());
     adelieCommand.toCommandLine();

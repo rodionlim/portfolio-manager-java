@@ -2,6 +2,7 @@ package com.rodion.adelie;
 
 import com.rodion.adelie.controller.AdelieController;
 import java.nio.file.Path;
+import java.util.concurrent.CountDownLatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +10,8 @@ import org.slf4j.LoggerFactory;
 public class Runner implements AutoCloseable {
 
   private static final Logger logger = LoggerFactory.getLogger(Runner.class);
+
+  private final CountDownLatch shutdown = new CountDownLatch(1);
 
   private final AdelieController adelieController;
   private final Path dataDir;
@@ -24,6 +27,7 @@ public class Runner implements AutoCloseable {
     this.adelieController = adelieController;
   }
 
+  /** Start portfolio manager main loop. */
   public void startPfmMainLoop() {
     try {
       logger.info("Starting Pfm (Portfolio Manager) main loop");
@@ -34,8 +38,20 @@ public class Runner implements AutoCloseable {
     }
   }
 
+  /** Stop services. */
   public void stop() {
     adelieController.close();
+    shutdown.countDown();
+  }
+
+  /** Await stop. */
+  public void awaitStop() {
+    try {
+      shutdown.await();
+    } catch (final InterruptedException e) {
+      logger.debug("Interrupted, exiting", e);
+      Thread.currentThread().interrupt();
+    }
   }
 
   @Override

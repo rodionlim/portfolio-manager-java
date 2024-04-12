@@ -27,7 +27,15 @@ public class AdeliePluginContextImpl implements AdelieContext {
     /** Registering lifecycle. */
     REGISTERING,
     /** Registered lifecycle. */
-    REGISTERED
+    REGISTERED,
+    /** Before main loop started lifecycle. */
+    BEFORE_MAIN_LOOP_STARTED,
+    /** Before main loop finished lifecycle. */
+    BEFORE_MAIN_LOOP_FINISHED,
+    /** Stopping lifecycle. */
+    STOPPING,
+    /** Stopped lifecycle. */
+    STOPPED
   }
 
   private Lifecycle state = Lifecycle.UNINITIALIZED;
@@ -144,6 +152,58 @@ public class AdeliePluginContextImpl implements AdelieContext {
             .filter(Predicate.not(String::isBlank))
             .orElse("<Unknown Version>");
     return implTitle + "/v" + implVersion;
+  }
+
+  /** Start plugins. */
+  public void startPlugins() {
+    checkState(
+        state == Lifecycle.REGISTERED,
+        "AdelieContext should be in state %s but it was in %s",
+        Lifecycle.REGISTERED,
+        state);
+    state = Lifecycle.BEFORE_MAIN_LOOP_STARTED;
+    final Iterator<AdeliePlugin> pluginsIterator = plugins.iterator();
+
+    while (pluginsIterator.hasNext()) {
+      final AdeliePlugin plugin = pluginsIterator.next();
+
+      try {
+        plugin.start();
+        logger.info("Started plugin of type {}.", plugin.getClass().getName());
+      } catch (final Exception e) {
+        logger.error(
+            "Error starting plugin of type "
+                + plugin.getClass().getName()
+                + ", stop will not be called.",
+            e);
+        pluginsIterator.remove();
+      }
+    }
+
+    logger.info("Plugin startup complete.");
+    state = Lifecycle.BEFORE_MAIN_LOOP_FINISHED;
+  }
+
+  /** Stop plugins. */
+  public void stopPlugins() {
+    checkState(
+        state == Lifecycle.BEFORE_MAIN_LOOP_FINISHED,
+        "AdelieContext should be in state %s but it was in %s",
+        Lifecycle.BEFORE_MAIN_LOOP_FINISHED,
+        state);
+    state = Lifecycle.STOPPING;
+
+    for (final AdeliePlugin plugin : plugins) {
+      try {
+        plugin.stop();
+        logger.info("Stopped plugin of type {}.", plugin.getClass().getName());
+      } catch (final Exception e) {
+        logger.error("Error stopping plugin of type " + plugin.getClass().getName(), e);
+      }
+    }
+
+    logger.info("Plugin shutdown complete.");
+    state = Lifecycle.STOPPED;
   }
 
   private static URL pathToURIOrNull(final Path p) {

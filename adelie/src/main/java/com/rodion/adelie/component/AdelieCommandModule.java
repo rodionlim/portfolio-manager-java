@@ -1,7 +1,8 @@
 package com.rodion.adelie.component;
 
-import com.rodion.adelie.PortfolioManager;
+import com.rodion.adelie.Adelie;
 import com.rodion.adelie.cli.AdelieCommand;
+import com.rodion.adelie.controller.AdelieControllerBuilder;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
@@ -18,7 +19,10 @@ public class AdelieCommandModule {
   @Singleton
   AdelieCommand provideAdelieCommand(final AdelieComponent adelieComponent) {
     final AdelieCommand adelieCommand =
-        new AdelieCommand(adelieComponent, adelieComponent.getAdeliePluginContextImpl());
+        new AdelieCommand(
+            adelieComponent,
+            new AdelieControllerBuilder(),
+            adelieComponent.getAdeliePluginContextImpl());
     adelieCommand.toCommandLine();
     return adelieCommand;
   }
@@ -27,6 +31,6 @@ public class AdelieCommandModule {
   @Named("adelieCommandLogger")
   @Singleton
   Logger provideAdelieCommandLogger() {
-    return PortfolioManager.getFirstLogger();
+    return Adelie.getFirstLogger();
   }
 }

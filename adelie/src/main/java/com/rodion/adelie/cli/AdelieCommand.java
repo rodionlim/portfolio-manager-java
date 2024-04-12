@@ -75,8 +75,8 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
   private String keyValueStorageName = DEFAULT_KEY_VALUE_STORAGE_NAME;
 
   private KeyValueStorageProvider keyValueStorageProvider;
-  private AdelieConfigurationImpl pluginCommonConfiguration;
-  private AdelieControllerBuilder controllerBuilderFactory;
+  private final AdelieConfigurationImpl pluginCommonConfiguration;
+  private final AdelieControllerBuilder controllerBuilderFactory;
   private AdelieController adelieController;
 
   /**
@@ -86,9 +86,12 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
    * @param adeliePluginContext instance of AdeliePluginContextImpl
    */
   public AdelieCommand(
-      final AdelieComponent adelieComponent, final AdeliePluginContextImpl adeliePluginContext) {
+      final AdelieComponent adelieComponent,
+      final AdelieControllerBuilder controllerBuilderFactory,
+      final AdeliePluginContextImpl adeliePluginContext) {
     this(
         adelieComponent,
+        controllerBuilderFactory,
         adeliePluginContext,
         new MarketDataServiceImpl(),
         new StorageServiceImpl());
@@ -100,20 +103,24 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
    * @param adelieComponent AdelieComponent which acts as our application context
    * @param adeliePluginContext instance of AdeliePluginContextImpl
    * @param marketDataServiceImpl instance of MarketDataServiceImpl
+   * @param storageServiceImpl instance of StorageServiceImpl
    */
   @VisibleForTesting
   protected AdelieCommand(
       final AdelieComponent adelieComponent,
+      final AdelieControllerBuilder controllerBuilderFactory,
       final AdeliePluginContextImpl adeliePluginContext,
       final MarketDataServiceImpl marketDataServiceImpl,
       final StorageServiceImpl storageServiceImpl) {
     this.logger = adelieComponent.getAdelieCommandLogger();
     this.adelieComponent = adelieComponent;
     this.adeliePluginContext = adeliePluginContext;
+    this.controllerBuilderFactory = controllerBuilderFactory;
     this.marketDataService = marketDataServiceImpl;
+    this.pluginCommonConfiguration = new AdelieConfigurationImpl();
     this.storageService = storageServiceImpl;
 
-    logger.info("Successfully loaded Adélie portfolio manager command");
+    logger.info("Successfully loaded Adélie Portfolio Manager command");
   }
 
   /**
@@ -157,10 +164,10 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
   public void run() {
     try {
       configureLogging(true);
-      logger.info("Starting Adélie");
+      logger.info("Starting Adélie Portfolio Manager");
       adelieController = buildController(); // add reference to kv storage
     } catch (final Exception e) {
-      logger.error("Failed to start Adélie", e);
+      logger.error("Failed to start Adélie Portfolio Manager", e);
       throw new CommandLine.ParameterException(this.commandLine, e.getMessage(), e);
     }
   }

@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-    javaMainClass = "com.rodion.adelie.PortfolioManager"
+    javaMainClass = "com.rodion.adelie.Adelie"
 }
 
 jar {

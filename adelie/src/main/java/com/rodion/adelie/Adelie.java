@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import picocli.CommandLine.RunLast;
 
 /** Adelie Portfolio Manager bootstrap class */
-public final class PortfolioManager {
+public final class Adelie {
   /**
    * The main entrypoint to Portfolio Manager application
    *
@@ -53,7 +53,7 @@ public final class PortfolioManager {
    * @return Logger
    */
   public static Logger getFirstLogger() {
-    final Logger logger = LoggerFactory.getLogger(PortfolioManager.class);
+    final Logger logger = LoggerFactory.getLogger(Adelie.class);
     Thread.setDefaultUncaughtExceptionHandler(slf4jExceptionHandler(logger));
     Thread.currentThread().setUncaughtExceptionHandler(slf4jExceptionHandler(logger));
 

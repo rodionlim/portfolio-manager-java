@@ -54,6 +54,45 @@ allprojects {
 
 jar { enabled = false }
 
+dependencies {
+    implementation project(':adelie')
+}
+
+application {
+    mainClass = 'com.rodion.adelie.Adelie'
+}
+
+applicationDefaultJvmArgs = [
+        // ADELIE_HOME is replaced by a doFirst block in the run task.
+        '-Dadelie.home=ADELIE_HOME',
+        // We shutdown log4j ourselves, as otherwise this shutdown hook runs before our own and whatever
+        // happens during shutdown is not logged.
+        '-Dlog4j.shutdownHookEnabled=false',
+        // Disable JNI lookups in log4j messages to improve security
+        '-Dlog4j2.formatMsgNoLookups=true',
+]
+
+def buildDirectory = layout.buildDirectory
+
+run {
+    args project.hasProperty("adelie.run.args") ? project.property("adelie.run.args").toString().split("\\s+") : []
+    doFirst {
+        applicationDefaultJvmArgs = applicationDefaultJvmArgs.collect {
+            it.replace('ADELIE_HOME', buildDirectory.dir("adelie").get().asFile.toString())
+        }
+    }
+}
+
+startScripts {
+    defaultJvmOpts = applicationDefaultJvmArgs + [
+            "-XX:G1ConcRefinementThreads=2",
+            "-XX:G1HeapWastePercent=15",
+            "-XX:MaxGCPauseMillis=100"
+    ]
+    unixStartScriptGenerator.template = resources.text.fromFile("${projectDir}/adelie/src/main/scripts/unixStartScript.txt")
+    doLast { tweakStartScript(startScripts) }
+}
+
 @Memoized
 def calculateVersion() {
     // Regex pattern for basic calendar versioning, with provision to omit patch rev
@@ -101,31 +140,18 @@ def getGitCommitDetails(length = 8) {
     }
 }
 
-application {
-    mainClass = 'com.rodion.adelie.Adelie'
-}
-
-dependencies {
-    implementation project(':adelie')
-}
-
-applicationDefaultJvmArgs = [
-        // ADELIE_HOME is replaced by a doFirst block in the run task.
-        '-Dadelie.home=ADELIE_HOME',
-        // We shutdown log4j ourselves, as otherwise this shutdown hook runs before our own and whatever
-        // happens during shutdown is not logged.
-        '-Dlog4j.shutdownHookEnabled=false',
-        // Disable JNI lookups in log4j messages to improve security
-        '-Dlog4j2.formatMsgNoLookups=true',
-]
-
-def buildDirectory = layout.buildDirectory
-
-run {
-    args project.hasProperty("adelie.run.args") ? project.property("adelie.run.args").toString().split("\\s+") : []
-    doFirst {
-        applicationDefaultJvmArgs = applicationDefaultJvmArgs.collect {
-            it.replace('ADELIE_HOME', buildDirectory.dir("adelie").get().asFile.toString())
-        }
+def tweakStartScript(createScriptTask) {
+    def shortenWindowsClasspath = { line ->
+        line.replaceAll(/^set CLASSPATH=.*$/, "set CLASSPATH=%APP_HOME%/lib/*")
     }
+
+    createScriptTask.unixScript.text = createScriptTask.unixScript.text.replace('ADELIE_HOME', '\$APP_HOME')
+    createScriptTask.windowsScript.text = createScriptTask.windowsScript.text.replace('ADELIE_HOME', '%~dp0..')
+
+    // Prevent the error originating from the 8191 chars limit on Windows
+    createScriptTask.windowsScript.text =
+            createScriptTask.windowsScript
+                    .readLines()
+                    .collect(shortenWindowsClasspath)
+                    .join('\r\n')
 }

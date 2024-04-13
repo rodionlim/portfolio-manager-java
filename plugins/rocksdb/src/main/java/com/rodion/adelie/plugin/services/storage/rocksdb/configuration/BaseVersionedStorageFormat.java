@@ -3,7 +3,7 @@ package com.rodion.adelie.plugin.services.storage.rocksdb.configuration;
 import com.rodion.adelie.plugin.services.storage.DataStorageConfiguration;
 import com.rodion.adelie.plugin.services.storage.DataStorageFormat;
 
-/** Base versioned data storage format */
+/** Adelie versioned data storage format */
 public enum BaseVersionedStorageFormat implements VersionedStorageFormat {
   /** Original Forest version, not used since replace by FOREST_WITH_VARIABLES */
   FOREST_ORIGINAL(DataStorageFormat.FOREST, 1),

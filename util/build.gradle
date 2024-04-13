@@ -1,5 +1,5 @@
 jar {
-    archiveBaseName = 'besu-util'
+    archiveBaseName = 'adelie-util'
     manifest {
         attributes(
                 'Specification-Title': archiveBaseName,

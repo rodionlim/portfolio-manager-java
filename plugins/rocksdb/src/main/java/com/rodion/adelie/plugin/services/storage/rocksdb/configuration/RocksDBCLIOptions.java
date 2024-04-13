@@ -63,7 +63,7 @@ public class RocksDBCLIOptions {
       hidden = true,
       paramLabel = "<BOOLEAN>",
       description =
-          "Use this flag to boost Besu performance if you have a 16 GiB RAM hardware or more (default: ${DEFAULT-VALUE})")
+          "Use this flag to boost Adelie performance if you have a 16 GiB RAM hardware or more (default: ${DEFAULT-VALUE})")
   boolean isHighSpec;
 
   private RocksDBCLIOptions() {}

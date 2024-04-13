@@ -252,13 +252,13 @@ public class RocksDBKeyValueStorageFactory implements KeyValueStorageFactory {
     // In case we do an automated downgrade, then we also need to update the metadata on disk to
     // reflect the change to the runtime version, and return it.
 
-    // Besu supports both formats of receipts so no downgrade is needed
+    // Adelie supports both formats of receipts so no downgrade is needed
     if (runtimeVersion == BaseVersionedStorageFormat.BONSAI_WITH_VARIABLES
         || runtimeVersion == BaseVersionedStorageFormat.FOREST_WITH_VARIABLES) {
       logger.warn(
           "Database contains compacted receipts but receipt compaction is not enabled, new receipts  will "
               + "be not stored in the compacted format. If you want to remove compacted receipts from the "
-              + "database it is necessary to resync Besu. Besu can support both compacted and non-compacted receipts.");
+              + "database it is necessary to resync Adelie. Adelie can support both compacted and non-compacted receipts.");
       return Optional.empty();
     }
 

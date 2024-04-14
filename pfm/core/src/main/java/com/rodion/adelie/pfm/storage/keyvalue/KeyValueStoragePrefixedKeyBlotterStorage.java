@@ -1,14 +1,14 @@
 package com.rodion.adelie.pfm.storage.keyvalue;
 
-import com.rodion.adelie.pfm.blotter.BlotterKeyValueStorage;
+import com.rodion.adelie.pfm.blotter.BlotterStorage;
 import com.rodion.adelie.plugin.services.storage.DataStorageFormat;
 import com.rodion.adelie.plugin.services.storage.KeyValueStorage;
 
-public class ForestBlotterKeyValueStorage implements BlotterKeyValueStorage {
+public class KeyValueStoragePrefixedKeyBlotterStorage implements BlotterStorage {
 
   private final KeyValueStorage keyValueStorage;
 
-  public ForestBlotterKeyValueStorage(final KeyValueStorage keyValueStorage) {
+  public KeyValueStoragePrefixedKeyBlotterStorage(final KeyValueStorage keyValueStorage) {
     this.keyValueStorage = keyValueStorage;
   }
 

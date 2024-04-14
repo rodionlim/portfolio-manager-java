@@ -17,6 +17,20 @@ group = 'com.rodion.adelie'
 
 defaultTasks 'build', 'javadoc'
 
+def buildAliases = ['dev': [
+        'spotlessApply',
+        'build',
+        'javadoc'
+]]
+
+def expandedTaskList = []
+gradle.startParameter.taskNames.each {
+    expandedTaskList << (buildAliases[it] ? buildAliases[it] : it)
+}
+gradle.startParameter.taskNames = expandedTaskList.flatten()
+
+tasks.register("dev")
+
 allprojects {
     apply plugin: 'java-library'
     apply plugin: 'io.spring.dependency-management'

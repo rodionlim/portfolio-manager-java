@@ -1,6 +1,6 @@
 package com.rodion.adelie.pfm.storage.keyvalue;
 
-import com.rodion.adelie.pfm.blotter.BlotterKeyValueStorage;
+import com.rodion.adelie.pfm.blotter.BlotterStorage;
 import com.rodion.adelie.plugin.services.storage.DataStorageConfiguration;
 import com.rodion.adelie.plugin.services.storage.KeyValueStorage;
 import com.rodion.adelie.plugin.services.storage.SegmentIdentifier;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface StorageProvider extends Closeable {
 
-  BlotterKeyValueStorage createBlotterStorage(DataStorageConfiguration dataStorageConfiguration);
+  BlotterStorage createBlotterStorage(DataStorageConfiguration dataStorageConfiguration);
 
   KeyValueStorage getStorageBySegmentIdentifier(SegmentIdentifier segment);
 

@@ -1,6 +1,6 @@
 package com.rodion.adelie.pfm.storage.keyvalue;
 
-import com.rodion.adelie.pfm.blotter.BlotterKeyValueStorage;
+import com.rodion.adelie.pfm.blotter.BlotterStorage;
 import com.rodion.adelie.plugin.services.storage.DataStorageConfiguration;
 import com.rodion.adelie.plugin.services.storage.KeyValueStorage;
 import com.rodion.adelie.plugin.services.storage.SegmentIdentifier;
@@ -29,9 +29,8 @@ public class KeyValueStorageProvider implements StorageProvider {
   }
 
   @Override
-  public BlotterKeyValueStorage createBlotterStorage(
-      DataStorageConfiguration dataStorageConfiguration) {
-    return new ForestBlotterKeyValueStorage(
+  public BlotterStorage createBlotterStorage(DataStorageConfiguration dataStorageConfiguration) {
+    return new KeyValueStoragePrefixedKeyBlotterStorage(
         getStorageBySegmentIdentifier(KeyValueSegmentIdentifier.BLOTTER));
   }
 

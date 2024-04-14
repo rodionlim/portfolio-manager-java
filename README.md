@@ -4,7 +4,7 @@ A command line application (Adélie) to value stocks and cryptocurrencies in you
 
 ## Features
 
-- Valuate stocks and cryptocurrencies based on current market prices
+- Value stocks and cryptocurrencies based on current market prices
 - Store portfolio data in a JSON file for easy access and manipulation
 - Store portfolio data in rocksdb for persistence
 - Calculate total portfolio value based on current prices
@@ -14,7 +14,7 @@ A command line application (Adélie) to value stocks and cryptocurrencies in you
 
 1. Install Java 21 or higher
 2. Clone the repository to your local machine.
-3. ```./gradlew run --args=-h```
+3. ```./gradlew run --args=-h``` for local development
 
 ## Usage
 

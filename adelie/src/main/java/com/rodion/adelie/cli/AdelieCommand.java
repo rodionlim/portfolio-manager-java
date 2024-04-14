@@ -6,11 +6,13 @@ import static com.rodion.adelie.cli.DefaultCommandValues.getDefaultAdelieDataPat
 import com.google.common.annotations.VisibleForTesting;
 import com.rodion.adelie.Runner;
 import com.rodion.adelie.RunnerBuilder;
+import com.rodion.adelie.cli.options.stable.DataStorageOptions;
 import com.rodion.adelie.cli.options.stable.LoggingLevelOption;
 import com.rodion.adelie.cli.subcommands.MarketDataSubCommand;
 import com.rodion.adelie.component.AdelieComponent;
 import com.rodion.adelie.controller.AdelieController;
 import com.rodion.adelie.controller.AdelieControllerBuilder;
+import com.rodion.adelie.pfm.blotter.DataStorageConfiguration;
 import com.rodion.adelie.pfm.storage.keyvalue.KeyValueStorageProvider;
 import com.rodion.adelie.pfm.storage.keyvalue.KeyValueStorageProviderBuilder;
 import com.rodion.adelie.plugin.services.PicoCLIOptions;
@@ -45,6 +47,7 @@ import picocli.CommandLine.IExecutionStrategy;
     })
 public class AdelieCommand implements DefaultCommandValues, Runnable {
 
+  // non static for testing
   private final Logger logger;
 
   /** The constant DATABASE_PATH. */
@@ -54,13 +57,18 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
 
   private CommandLine commandLine;
 
-  private final AdelieComponent adelieComponent;
+  // Stable CLI Options
+  final DataStorageOptions dataStorageOptions = DataStorageOptions.create();
 
   private final AdeliePluginContextImpl adeliePluginContext;
-
-  private final MarketDataServiceImpl marketDataService;
-
   private final StorageServiceImpl storageService;
+  private final RunnerBuilder runnerBuilder;
+  private KeyValueStorageProvider keyValueStorageProvider;
+  private final AdelieConfigurationImpl pluginCommonConfiguration;
+  private final AdelieControllerBuilder controllerBuilderFactory;
+  private AdelieController adelieController;
+  private DataStorageConfiguration dataStorageConfiguration;
+  private final MarketDataServiceImpl marketDataService;
 
   private RocksDBPlugin rocksDBPlugin;
 
@@ -77,11 +85,7 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
       arity = "1")
   private String keyValueStorageName = DEFAULT_KEY_VALUE_STORAGE_NAME;
 
-  private final RunnerBuilder runnerBuilder;
-  private KeyValueStorageProvider keyValueStorageProvider;
-  private final AdelieConfigurationImpl pluginCommonConfiguration;
-  private final AdelieControllerBuilder controllerBuilderFactory;
-  private AdelieController adelieController;
+  private final AdelieComponent adelieComponent;
 
   /**
    * Adelie Portfolio Manager command constructor.
@@ -245,9 +249,17 @@ public class AdelieCommand implements DefaultCommandValues, Runnable {
    * @return instance of AdelieControllerBuilder
    */
   public AdelieControllerBuilder getControllerBuilder() {
-    pluginCommonConfiguration.init(dataDir(), dataDir().resolve(DATABASE_PATH));
+    pluginCommonConfiguration.init(
+        dataDir(), dataDir().resolve(DATABASE_PATH), getDataStorageConfiguration());
     final KeyValueStorageProvider storageProvider = keyValueStorageProvider(keyValueStorageName);
     return controllerBuilderFactory.dataDirectory(dataDir()).storageProvider(storageProvider);
+  }
+
+  private DataStorageConfiguration getDataStorageConfiguration() {
+    if (dataStorageConfiguration == null) {
+      dataStorageConfiguration = dataStorageOptions.toDomainObject();
+    }
+    return dataStorageConfiguration;
   }
 
   /**

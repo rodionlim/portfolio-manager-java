@@ -3,6 +3,9 @@ package com.rodion.adelie.controller;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.rodion.adelie.component.AdelieComponent;
+import com.rodion.adelie.pfm.blotter.Blotter;
+import com.rodion.adelie.pfm.blotter.DataStorageConfiguration;
+import com.rodion.adelie.pfm.blotter.DefaultBlotter;
 import com.rodion.adelie.pfm.storage.keyvalue.StorageProvider;
 import java.io.Closeable;
 import java.nio.file.Path;
@@ -21,6 +24,12 @@ public class AdelieControllerBuilder {
 
   /** The Storage provider. */
   protected StorageProvider storageProvider;
+
+  protected Blotter blotter;
+
+  /** The Data storage configuration. */
+  protected DataStorageConfiguration dataStorageConfiguration =
+      DataStorageConfiguration.DEFAULT_CONFIG;
 
   /** the Dagger configured context that can provide dependencies */
   protected Optional<AdelieComponent> adelieComponent = Optional.empty();
@@ -67,6 +76,8 @@ public class AdelieControllerBuilder {
     checkNotNull(dataDirectory, "Missing data directory");
     checkNotNull(storageProvider, "Missing storage provider");
     final List<Closeable> closeables = new ArrayList<>();
-    return new AdelieController(closeables, storageProvider);
+    Blotter blotter =
+        new DefaultBlotter(storageProvider.createBlotterStorage(dataStorageConfiguration));
+    return new AdelieController(closeables, storageProvider, blotter);
   }
 }

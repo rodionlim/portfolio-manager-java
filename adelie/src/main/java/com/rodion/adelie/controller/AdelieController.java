@@ -1,5 +1,6 @@
 package com.rodion.adelie.controller;
 
+import com.rodion.adelie.pfm.blotter.Blotter;
 import com.rodion.adelie.pfm.storage.keyvalue.StorageProvider;
 import java.io.Closeable;
 import java.io.IOException;
@@ -11,15 +12,22 @@ public class AdelieController implements java.io.Closeable {
   private static final Logger logger = LoggerFactory.getLogger(AdelieController.class);
   private final StorageProvider storageProvider;
   private final List<Closeable> closeables;
+  private final Blotter blotter;
 
   /**
    * Instantiates a new Adelie controller.
    *
+   * @param closeables list of closeables
    * @param storageProvider the storage provider
+   * @param blotter blotter service
    */
-  AdelieController(final List<Closeable> closeables, final StorageProvider storageProvider) {
+  AdelieController(
+      final List<Closeable> closeables,
+      final StorageProvider storageProvider,
+      final Blotter blotter) {
     this.closeables = closeables;
     this.storageProvider = storageProvider;
+    this.blotter = blotter;
   }
 
   /**

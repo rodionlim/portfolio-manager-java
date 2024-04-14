@@ -12,7 +12,7 @@ public class DefaultBlotter implements Blotter {
 
   private final BlotterStorage blotterStorage;
 
-  private DefaultBlotter(BlotterStorage blotterStorage) {
+  public DefaultBlotter(BlotterStorage blotterStorage) {
     checkNotNull(blotterStorage);
     this.blotterStorage = blotterStorage;
   }

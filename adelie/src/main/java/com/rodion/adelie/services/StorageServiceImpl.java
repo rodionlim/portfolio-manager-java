@@ -1,9 +1,9 @@
 package com.rodion.adelie.services;
 
+import com.rodion.adelie.pfm.storage.keyvalue.KeyValueSegmentIdentifier;
 import com.rodion.adelie.plugin.services.StorageService;
 import com.rodion.adelie.plugin.services.storage.KeyValueStorageFactory;
 import com.rodion.adelie.plugin.services.storage.SegmentIdentifier;
-import com.rodion.adelie.storage.KeyValueSegmentIdentifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

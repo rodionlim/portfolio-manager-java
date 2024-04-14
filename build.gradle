@@ -90,10 +90,8 @@ def buildDirectory = layout.buildDirectory
 
 run {
     args project.hasProperty("adelie.run.args") ? project.property("adelie.run.args").toString().split("\\s+") : []
-    doFirst {
-        applicationDefaultJvmArgs = applicationDefaultJvmArgs.collect {
-            it.replace('ADELIE_HOME', buildDirectory.dir("adelie").get().asFile.toString())
-        }
+    applicationDefaultJvmArgs = applicationDefaultJvmArgs.collect {
+        it.replace('ADELIE_HOME', buildDirectory.dir("adelie").get().asFile.toString())
     }
 }
 
